@@ -1,0 +1,18 @@
+ running with           1           0           4
+ Beginning ground state search!
+ Energy and energy density at n-thiteration of IMPS:           0 -0.28102496759066520      -0.14051248379533260     
+ Energy and energy density at n-th iteration of IMPS:           1 -0.89230169389512504      -0.22307542347378126     
+ Energy and energy density at n-th iteration of IMPS:           2  -1.5131660952836277      -0.25219434921393796     
+ Energy and energy density at n-th iteration of IMPS:           3  -2.1349667675631285      -0.26687084594539107     
+ Energy and energy density at n-th iteration of IMPS:           4  -2.7571459140528320      -0.27571459140528320     
+ Beginning two-site algorithm
+ outer           1 inner           1 bond dimension chi          58
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.7610266217681745               54   4.9852126655211674E-010   10000.000000000000        9999.9999999995016        2.2675023282163423E-011
+ outer           1 inner           2 bond dimension chi          54
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.7610266218596364               55   2.7437744537934403E-010   4.9852126655211674E-010   2.2414382117277271E-010   2.7540487291371798E-011
+ outer           1 inner           3 bond dimension chi          55
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.7610266218596369               55   2.7437756166208045E-010   2.7437744537934403E-010   1.1628273642324223E-016   2.7541823181945609E-011
+ outer           2 inner           1 bond dimension chi          55
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.7610266219084094               60   7.4319270512267784E-011   2.7437756166208045E-010   2.0005829114981265E-010   7.6042015579982391E-012
+ Converged in           4 sweeps.  Energy:  -2.7610266219084094       with variance/Lambda_ratio=   7.4319270512267784E-011
+ time taken:   14.376445000000000       seconds!

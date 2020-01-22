@@ -1,0 +1,16 @@
+ running with           1           0           4
+ Beginning ground state search!
+ Energy and energy density at n-thiteration of IMPS:           0   0.0000000000000000        0.0000000000000000     
+ Energy and energy density at n-th iteration of IMPS:           1   0.0000000000000000        0.0000000000000000     
+ Energy and energy density at n-th iteration of IMPS:           2   0.0000000000000000        0.0000000000000000     
+ Energy and energy density at n-th iteration of IMPS:           3   0.0000000000000000        0.0000000000000000     
+ Energy and energy density at n-th iteration of IMPS:           4 -0.32000000000000001       -3.2000000000000001E-002
+ Beginning two-site algorithm
+ outer           1 inner           1 bond dimension chi           2
+ energy bond dimension, variance, last variance, difference in variance, discarded weight -0.60690597454776285                2   2.4769258093201236E-003   10000.000000000000        9999.9975230741911        0.0000000000000000     
+ outer           1 inner           2 bond dimension chi           2
+ energy bond dimension, variance, last variance, difference in variance, discarded weight -0.61407548765444175                2   4.4088546346729429E-009   2.4769258093201236E-003   2.4769214004654889E-003   0.0000000000000000     
+ outer           1 inner           3 bond dimension chi           2
+ energy bond dimension, variance, last variance, difference in variance, discarded weight -0.61407550311327863                2   1.9949319973733282E-017   4.4088546346729429E-009   4.4088546147236229E-009   0.0000000000000000     
+ Converged in           3 sweeps.  Energy: -0.61407550311327863       with variance/Lambda_ratio=   1.9949319973733282E-017
+ time taken:   3.1435389999999996       seconds!

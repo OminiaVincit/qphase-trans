@@ -1,0 +1,24 @@
+ running with           1           0           4
+ Beginning ground state search!
+ Energy and energy density at n-thiteration of IMPS:           0 -0.25073297516493820      -0.12536648758246910     
+ Energy and energy density at n-th iteration of IMPS:           1 -0.79490656022375583      -0.19872664005593896     
+ Energy and energy density at n-th iteration of IMPS:           2  -1.4279060505886871      -0.23798434176478120     
+ Energy and energy density at n-th iteration of IMPS:           3  -1.9776807567428958      -0.24721009459286197     
+ Energy and energy density at n-th iteration of IMPS:           4  -2.4909699557601424      -0.24909699557601422     
+ Beginning two-site algorithm
+ outer           1 inner           1 bond dimension chi          46
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.4911728409344671               43   4.3164756815545802E-009   10000.000000000000        9999.9999999956835        2.4315735744684358E-011
+ outer           1 inner           2 bond dimension chi          43
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.4911728409349863               43   4.3173701781006518E-009   4.3164756815545802E-009   8.9449654607154711E-013   1.9168185146056382E-011
+ outer           2 inner           1 bond dimension chi          43
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.4911728409619767               53   4.4723667587549728E-009   4.3173701781006518E-009   1.5499658065432101E-010   4.6947867454799040E-013
+ outer           2 inner           2 bond dimension chi          53
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.4911728409619820               53   4.4723824404864433E-009   4.4723667587549728E-009   1.5681731470540750E-014   4.4388445362400859E-013
+ outer           3 inner           1 bond dimension chi          53
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.4911728409632223               62   4.4793361533656362E-009   4.4723824404864433E-009   6.9537128791928342E-012   1.1573677423040226E-014
+ outer           3 inner           2 bond dimension chi          62
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.4911728409632192               61   4.4793619199998172E-009   4.4793361533656362E-009   2.5766634181020064E-014   1.0812304694324588E-014
+ outer           3 inner           3 bond dimension chi          61
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  -2.4911728409632201               61   4.4793710924138993E-009   4.4793619199998172E-009   9.1724140820607014E-015   9.4106198705161027E-015
+ Failed to converge in           7 sweeps.  Energy:  -2.4911728409632201       with variance/Lambda_ratio=   4.4793710924138993E-009
+ time taken:   9.1580279999999998       seconds!

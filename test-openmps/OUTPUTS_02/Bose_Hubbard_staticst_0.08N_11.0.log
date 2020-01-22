@@ -1,0 +1,20 @@
+ running with           1           0           4
+ Beginning ground state search!
+ Energy and energy density at n-thiteration of IMPS:           0  -2.4976189936267466E-002  -1.2488094968133733E-002
+ Energy and energy density at n-th iteration of IMPS:           1  -7.5797775162720210E-002  -1.8949443790680053E-002
+ Energy and energy density at n-th iteration of IMPS:           2 -0.12665403031774353       -2.1109005052957253E-002
+ Energy and energy density at n-th iteration of IMPS:           3 -0.17751070330282320       -2.2188837912852900E-002
+ Energy and energy density at n-th iteration of IMPS:           4  0.48117613638111545        4.8117613638111546E-002
+ Beginning two-site algorithm
+ outer           1 inner           1 bond dimension chi          26
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  0.47868899848917867               25   2.6168427520713614E-008   10000.000000000000        9999.9999999738320        2.0291921072103469E-011
+ outer           1 inner           2 bond dimension chi          25
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  0.47868896507834269               26   1.2917351988193552E-010   2.6168427520713614E-008   2.6039254000831678E-008   1.9866063230423403E-011
+ outer           1 inner           3 bond dimension chi          26
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  0.47868896507834247               26   1.2917162804715458E-010   1.2917351988193552E-010   1.8918347809413632E-015   1.9865673389785688E-011
+ outer           2 inner           1 bond dimension chi          26
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  0.47868896507510172               27   1.1090921318086574E-010   1.2917162804715458E-010   1.8262414866288841E-011   1.8665836019799594E-011
+ outer           3 inner           1 bond dimension chi          27
+ energy bond dimension, variance, last variance, difference in variance, discarded weight  0.47868896506730657               27   8.3024412722466141E-011   1.1090921318086574E-010   2.7884800458399601E-011   1.1246613575268789E-011
+ Converged in           5 sweeps.  Energy:  0.47868896506730657       with variance/Lambda_ratio=   8.3024412722466141E-011
+ time taken:   13.868784000000000       seconds!
