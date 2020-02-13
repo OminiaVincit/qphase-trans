@@ -1,13 +1,10 @@
 import MPSPyLib as mps
-import networkmeasures as nm
-import ph_utils as ph
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import os.path
-import time
 
-def main(PostProcess=False, ShowPlots=True, pdim=0):
+def main(PostProcess=False, ShowPlots=True):
     """
     Introductory example for openMPS to simulate the finite size statics of
     the transverse Ising model. Two modes are available when running the
@@ -37,11 +34,9 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
 
     # Observables and convergence parameters
     myObservables = mps.Observables(Operators)
-    #myObservables.AddObservable('corr', ['sigmaz', 'sigmaz'], 'zz')
-    #myObservables.AddObservable('DensityMatrix_i', [])
-    #myObservables.AddObservable('DensityMatrix_ij', [])
     myObservables.AddObservable('MI', True)
-    myConv = mps.MPSConvParam(max_bond_dimension=20, max_num_sweeps=6,
+
+    myConv = mps.MPSConvParam(max_bond_dimension=60, max_num_sweeps=6,
                               local_tol=1E-14)
 
     # Specify constants and parameter lists
@@ -56,8 +51,8 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
             # Directories
             'job_ID'                    : 'Ising_Statics',
             'unique_ID'                 : 'g_' + str(g),
-            'Write_Directory'           : 'TMP_ISING_01_L_{}/'.format(L),
-            'Output_Directory'          : 'OUTPUTS_ISING_01_L_{}/'.format(L),
+            'Write_Directory'           : 'MI_TMP_01_L_{}/'.format(L),
+            'Output_Directory'          : 'MI_OUTPUTS_01_L_{}/'.format(L),
             # System size and Hamiltonian parameters
             'L'                         : L,
             'J'                         : J,
@@ -84,58 +79,24 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
 
     # PostProcess
     # -----------
-    dmat_list = []
+
     MI_list = []
     Outputs = mps.ReadStaticObservables(parameters)
     for Output in Outputs:
         print(Output['converged'])
-        #print(Output.keys())
 
+        # Get mutual information 
         MI_list.append(Output['MI'][3][26])
-        #for i in range(L):
-        #    for j in range(i+1, L):
-        #        rho1 = Output['rho_{}'.format(i+1)]
-        #        rho2 = Output['rho_{}'.format(j+1)]
-        #        rho12 = Output['rho_{}_{}'.format(i+1, j+1)]
-        #        rho = np.kron(rho1, rho2)
-        #        dist[i, j] = np.linalg.norm(rho12 - rho, ord = 'nuc')
-        #        dist[j, i] = dist[i, j]
-        netmeasures = nm.pearson(Output['MI'])
-        dist = 1.0 - np.abs(netmeasures[0])
-        #dist = nm.shortest(Output['MI'])
-        for i in range(L):
-            dist[i, i] = 0.0
-        #print(dist)
-        dmat_list.append(dist)
-        #print(dist.dtype)
-        #pent_list.append(dist[3, 26])
-        # Check distance metric
-        #for i in range(L):
-        #    for j in range(i+1, L):
-        #        for k in range(j+1, L):
-        #            if (dist[i, j] + dist[i, k] < dist[j, k]) or (dist[i, k] + dist[j, k] < dist[i, j]) or (dist[j, i] + dist[j, k] < dist[i, k]):
-        #                print(i, j, k, dist[i, j], dist[i, k], dist[j, k])
-        #                #return
-    
-        #MI_list.append(np.linalg.norm(rho12 - rho, ord='nuc'))
-    #npent_list, pent_list, pnorm_list = ph.compute_ph(out_path = './diagrams', fig_path = './figs', basename = 'ising', dmat_list = dmat_list, plot=True, pdim=pdim)
-    plt.style.use('seaborn-colorblind')
-    #plt.style.use('seaborn-whitegrid')
 
-    fig, ax1 = plt.subplots()
     plt.rc('font', family='serif')
     plt.rc('mathtext', fontset='cm')
-    ax1.scatter(glist, MI_list, c = 'red')
-    ax1.set_xlabel(r"transverse field coupling  " r"$g$", fontsize=16)
-    ax1.set_ylabel(r"p-norm persistence", fontsize=16)
-    ax2 = ax1.twinx()
-    ax2.set_ylabel('normalize persistent entropy', fontsize=16)
-    ax2.scatter(glist, MI_list, c = 'blue')
-    #plt.xlim((0, 2))
-    #plt.ylim((0, 1))
+    plt.scatter(glist, MI_list)
+    plt.xlabel(r"transverse field coupling  " r"$g$", fontsize=16)
+    plt.ylabel(r"Mutual information "
+               r"(4, 27)",
+               fontsize=16)
     if(ShowPlots):
-      timestamp = int(time.time() * 1000.0)
-      plt.savefig('IsingStatic_L_{}_ph_dim_{}_{}.pdf'.format(L, pdim, timestamp), bbox_inches='tight')
+      plt.savefig('MI_check_IsingStatics_L_{}.pdf'.format(L), bbox_inches='tight')
       plt.show()
 
     return
