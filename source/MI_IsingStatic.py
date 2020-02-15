@@ -24,7 +24,7 @@ def main(PostProcess=False, ShowPlots=True):
     Operators = mps.BuildSpinOperators(0.5)
     Operators['sigmaz'] = 2 * Operators['sz']
     Operators['sigmax'] = (Operators['splus'] + Operators['sminus'])
-
+    Operators['gen'] = np.array([[0,0], [0, 1.]])
     # Define Hamiltonian of transverse Ising model
     H = mps.MPO(Operators)
     # Note the J parameter in the transverse Ising Hamiltonian
@@ -41,9 +41,9 @@ def main(PostProcess=False, ShowPlots=True):
 
     # Specify constants and parameter lists
     J = 1.0
-    glist = np.linspace(0.1, 2.1, 41)
+    glist = np.linspace(0.1, 2.1, 21)
     parameters = []
-    L = 100 
+    L = 128 
 
     for g in glist:
         parameters.append({
@@ -61,7 +61,10 @@ def main(PostProcess=False, ShowPlots=True):
             'verbose'                   : 1,
             'MPSObservables'            : myObservables,
             'MPSConvergenceParameters'  : myConv,
-            'logfile'                   : True
+            'logfile'                   : True,
+            # Z2 symmetry
+            'Discrete_generators': ['gen'],
+            'Discrete_quantum_numbers': [0]
         })
 
     # Write Fortran-readable main files
