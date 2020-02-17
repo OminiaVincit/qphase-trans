@@ -25,9 +25,9 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
 
     # Build spin operators for spin-1/2 system
     Operators = mps.BuildSpinOperators(0.5)
-    Operators['sigmaz'] = 2 * Operators['sz']
-    Operators['sigmax'] = (Operators['splus'] + Operators['sminus'])
-
+    Operators['sigmax'] = 2 * Operators['sz']
+    Operators['sigmaz'] = (Operators['splus'] + Operators['sminus'])
+    Operators['gen'] = np.array([[0, 0], [0, 1.]])
     # Define Hamiltonian of transverse Ising model
     H = mps.MPO(Operators)
     # Note the J parameter in the transverse Ising Hamiltonian
@@ -41,14 +41,14 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
     #myObservables.AddObservable('DensityMatrix_i', [])
     #myObservables.AddObservable('DensityMatrix_ij', [])
     myObservables.AddObservable('MI', True)
-    myConv = mps.MPSConvParam(max_bond_dimension=20, max_num_sweeps=6,
+    myConv = mps.MPSConvParam(max_bond_dimension=20, max_num_sweeps=8,
                               local_tol=1E-14)
 
     # Specify constants and parameter lists
     J = 1.0
     glist = np.linspace(0.1, 2.1, 41)
     parameters = []
-    L = 100 
+    L = 64 
 
     for g in glist:
         parameters.append({
@@ -66,7 +66,10 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
             'verbose'                   : 1,
             'MPSObservables'            : myObservables,
             'MPSConvergenceParameters'  : myConv,
-            'logfile'                   : True
+            'logfile'                   : True,
+            # Z2 symmetry
+            'Discrete_generators': ['gen'],
+            'Discrete_quantum_numbers': [0]
         })
 
     # Write Fortran-readable main files
@@ -91,7 +94,7 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
         print(Output['converged'])
         #print(Output.keys())
 
-        MI_list.append(Output['MI'][3][26])
+        #MI_list.append(Output['MI'][3][26])
         #for i in range(L):
         #    for j in range(i+1, L):
         #        rho1 = Output['rho_{}'.format(i+1)]
@@ -102,10 +105,8 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
         #        dist[j, i] = dist[i, j]
         netmeasures = nm.pearson(Output['MI'])
         dist = 1.0 - np.abs(netmeasures[0])
-        #dist = nm.shortest(Output['MI'])
         for i in range(L):
             dist[i, i] = 0.0
-        #print(dist)
         dmat_list.append(dist)
         #print(dist.dtype)
         #pent_list.append(dist[3, 26])
@@ -118,19 +119,19 @@ def main(PostProcess=False, ShowPlots=True, pdim=0):
         #                #return
     
         #MI_list.append(np.linalg.norm(rho12 - rho, ord='nuc'))
-    #npent_list, pent_list, pnorm_list = ph.compute_ph(out_path = './diagrams', fig_path = './figs', basename = 'ising', dmat_list = dmat_list, plot=True, pdim=pdim)
+    npent_list, pent_list, pnorm_list = ph.compute_ph(out_path = './diagrams', fig_path = './figs', basename = 'ising', dmat_list = dmat_list, plot=True, pdim=pdim)
     plt.style.use('seaborn-colorblind')
     #plt.style.use('seaborn-whitegrid')
 
     fig, ax1 = plt.subplots()
     plt.rc('font', family='serif')
     plt.rc('mathtext', fontset='cm')
-    ax1.scatter(glist, MI_list, c = 'red')
+    ax1.scatter(glist, pnorm_list, c = 'red')
     ax1.set_xlabel(r"transverse field coupling  " r"$g$", fontsize=16)
     ax1.set_ylabel(r"p-norm persistence", fontsize=16)
     ax2 = ax1.twinx()
     ax2.set_ylabel('normalize persistent entropy', fontsize=16)
-    ax2.scatter(glist, MI_list, c = 'blue')
+    ax2.scatter(glist, npent_list, c = 'blue')
     #plt.xlim((0, 2))
     #plt.ylim((0, 1))
     if(ShowPlots):
@@ -150,6 +151,9 @@ if(__name__ == '__main__'):
         key, val = arg.split('=')
         if(key == '--PostProcess'): Post = (val == 'T') or (val == 'True')
         if(key == '--ShowPlots'): Plot = (val == 'T') or (val == 'True')
+        if(key == '--pdim'): pdim = int(val) 
+    
+    print('pdim={}'.format(pdim))
 
     # Run main function
-    main(PostProcess=Post, ShowPlots=Plot)
+    main(PostProcess=Post, ShowPlots=Plot, pdim=pdim)
