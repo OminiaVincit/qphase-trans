@@ -22,8 +22,8 @@ def main(PostProcess=False, ShowPlots=True):
 
     # Build spin operators for spin-1/2 system
     Operators = mps.BuildSpinOperators(0.5)
-    Operators['sigmaz'] = 2 * Operators['sz']
-    Operators['sigmax'] = (Operators['splus'] + Operators['sminus'])
+    Operators['sigmax'] = 2 * Operators['sz']
+    Operators['sigmaz'] = -(Operators['splus'] + Operators['sminus'])
     Operators['gen'] = np.array([[0,0], [0, 1.]])
     # Define Hamiltonian of transverse Ising model
     H = mps.MPO(Operators)
