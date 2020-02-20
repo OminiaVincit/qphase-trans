@@ -5,6 +5,18 @@ from ripser import ripser
 from visual_utils import plot_diagrams_with_mat
 from collections import defaultdict
 
+
+def compute_ph_unit(dmat, max_dim=1):
+    dgms = ripser(dmat, maxdim=1, distance_matrix=True)['dgms']
+    return dgms
+
+def compute_ph_distlist(dmat_list, max_dim=1):
+    dgms_list = []
+    for dmat in dmat_list:
+        dgms = ripser(dmat, maxdim=1, distance_matrix=True)['dgms']
+        dgms_list.append(dgms)
+    return dgms_list
+
 def compute_ph(out_path, fig_path, basename, dmat_list, plot, pdim):
     if os.path.isdir(out_path) == False:
         os.mkdir(out_path)
@@ -14,19 +26,20 @@ def compute_ph(out_path, fig_path, basename, dmat_list, plot, pdim):
     N = len(dmat_list)
     outfile = os.path.join(out_path, basename)
     outstr = defaultdict(list)
-    npent_list, pent_list, pnorm_list = [], [], []
+    npent_list, pent_list, pnorm_list, maxnorm_list = [], [], [], []
     for i in range(N):
         dmat = dmat_list[i]
         dgms = ripser(dmat, maxdim=1, distance_matrix = True)['dgms']
         for j, dgm in enumerate(dgms):
             for pt in dgm:
                 outstr[j].append('{} {} {} {}'.format(pt[0], pt[1], 1, i))
-        npent, pent, pnorm = measure_diagrams(dgms, dim=pdim, p=2)
-        print(npent, pent, pnorm)
+        npent, pent, pnorm, maxnorm = measure_diagrams(dgms, dim=pdim, p=2)
+        print(npent, pent, pnorm, maxnorm)
         npent_list.append(npent)
         pent_list.append(pent)
         pnorm_list.append(pnorm)
-        
+        maxnorm_list.append(maxnorm)
+
         if plot:
             # plot diagrams
             for j in [0, 1]:
@@ -38,17 +51,17 @@ def compute_ph(out_path, fig_path, basename, dmat_list, plot, pdim):
     for k, ostr in outstr.items():
         with open('{}_dim_{}.txt'.format(outfile, k), 'w') as file_hdl:
             file_hdl.write('\n'.join(ostr))
-    return npent_list, pent_list, pnorm_list
+    return npent_list, pent_list, pnorm_list, maxnorm_list
 
-def measure_diagrams(dgms, dim, p=2):
-    npent, pent, pnorm = 0, 0, 0
-    arr = np.array(dgms[dim])
+def measure_diagram(dgm, p=2):
+    npent, pent, pnorm, maxnorm = 0, 0, 0, 0
+    arr = np.array(dgm)
     if arr.shape[0] > 0 and arr.shape[1] > 1:
         tmp = arr[:,1] - arr[:,0]
-        print(tmp.shape)
         tmp = tmp[np.isfinite(tmp)]
-        print(tmp.shape)
+        tmp = abs(tmp)
         # Calculate p-norm
+        maxnorm = np.max(tmp)
         pnorm = (tmp**p).sum() ** (1/p)
         # Calculate p-entropy
         stmp = np.sum(tmp)
@@ -59,4 +72,7 @@ def measure_diagrams(dgms, dim, p=2):
         if (stmp != 1):
             npent = pent / np.log(stmp)
 
-    return npent, pent, pnorm
+    return npent, pent, pnorm, maxnorm
+
+def measure_diagrams(dgms, dim, p=2):
+    return measure_diagram(dgms[dim], p)
