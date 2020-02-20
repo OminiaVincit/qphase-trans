@@ -59,18 +59,19 @@ def measure_diagram(dgm, p=2):
     if arr.shape[0] > 0 and arr.shape[1] > 1:
         tmp = arr[:,1] - arr[:,0]
         tmp = tmp[np.isfinite(tmp)]
-        tmp = abs(tmp)
-        # Calculate p-norm
-        maxnorm = np.max(tmp)
-        pnorm = (tmp**p).sum() ** (1/p)
-        # Calculate p-entropy
-        stmp = np.sum(tmp)
-        tmp = tmp/stmp
-        for a in tmp:
-            if (a > 0):
-                pent += -a*np.log(a)
-        if (stmp != 1):
-            npent = pent / np.log(stmp)
+        if tmp.size > 0:
+            tmp = abs(tmp)
+            # Calculate p-norm
+            maxnorm = np.max(tmp)
+            pnorm = (tmp**p).sum() ** (1/p)
+            # Calculate p-entropy
+            stmp = np.sum(tmp)
+            tmp = tmp/stmp
+            for a in tmp:
+                if (a > 0):
+                    pent += -a*np.log(a)
+            if (stmp != 1):
+                npent = pent / np.log(stmp)
 
     return npent, pent, pnorm, maxnorm
 
