@@ -36,7 +36,7 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
     # site terms
     myObservables.AddObservable('site', 'nbtotal', name='n')
     myObservables.AddObservable('MI', True)
-    myConv = mps.MPSConvParam(max_bond_dimension=80, 
+    myConv = mps.MPSConvParam(max_bond_dimension=200, 
                 variance_tol = 1E-8,
                 local_tol = 1E-8,
                 max_num_sweeps = 7)
@@ -90,9 +90,10 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
     # -----------
     MI_list = []
     Outputs = mps.ReadStaticObservables(parameters)
+    M = int(L/2)
     for Output in Outputs:
         print(Output['converged'])
-        MI_list.append(Output['MI'][3][26])
+        MI_list.append(Output['MI'][3][M])
     
     timestamp = int(time.time() * 1000.0)
     if ShowPlot:
@@ -102,7 +103,7 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
         plt.rc('mathtext', fontset='cm')
         plt.scatter(tlist, MI_list)
         plt.xlabel(r"Tunneling " r"$J/U$", fontsize=16)
-        plt.ylabel(r"Mutual information (4,27)", fontsize=16)
+        plt.ylabel(r"Mutual information (4,L/2+1)", fontsize=16)
         plt.savefig('{}/BoseHubbard_MI_L_{}_{}.pdf'.format(exp_name, L, timestamp), bbox_inches='tight')
         plt.show()
     
@@ -170,7 +171,8 @@ if __name__ == '__main__':
     sim_outs, glist = simulate(L=L, ExpName=exp_name, PostProcess=post_flag, ShowPlot=plot_flag)
     if sim_outs is not None:
         print('Num outputs', len(sim_outs))
-    
+    else:
+       exit(1) 
     # Multi-processing
     processes = []
     N = len(sim_outs)
