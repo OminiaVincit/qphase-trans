@@ -1,5 +1,6 @@
 import MPSPyLib as mps
 import networkmeasures as nm
+import distancemeasures as dm
 import ph_utils as ph
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,8 +38,8 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
     # Observables and convergence parameters
     myObservables = mps.Observables(Operators)
     #myObservables.AddObservable('corr', ['sigmaz', 'sigmaz'], 'zz')
-    #myObservables.AddObservable('DensityMatrix_i', [])
-    #myObservables.AddObservable('DensityMatrix_ij', [])
+    myObservables.AddObservable('DensityMatrix_i', [])
+    myObservables.AddObservable('DensityMatrix_ij', [])
     myObservables.AddObservable('MI', True)
     myConv = mps.MPSConvParam(max_bond_dimension=200, 
                 variance_tol = 1E-10,
@@ -49,7 +50,7 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
 
     # Specify constants and parameter lists
     J = 1.0
-    glist = np.linspace(0.1, 2.1, 41)
+    glist = np.linspace(0.1, 2.1, 81)
     parameters = []
 
     for g in glist:
@@ -85,7 +86,7 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
         else:
             RunDir = None
         mps.runMPS(MainFiles, RunDir=RunDir)
-        return None
+        return None, None
 
     # PostProcess
     # -----------
@@ -109,7 +110,7 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
     
     return Outputs, glist
 
-def persistent_compute(mi_mats, max_dim, bg, time_stamp, basename, tmpdir, process_id):
+def persistent_compute(mi_mats, max_dim, bg, time_stamp, basename, tmpdir, process_id, tlabel):
     # Compute persistent entropy and save to temporary file
     N = len(mi_mats)
     if os.path.isdir(tmpdir) == False:
@@ -122,13 +123,20 @@ def persistent_compute(mi_mats, max_dim, bg, time_stamp, basename, tmpdir, proce
     for i in range(N):
         mimat = mi_mats[i]
         idx = bg + i
+
+        # Calculate distance matrix
         #print(process_id, i, bg, idx, mimat[3][26])
-        netmeasures = nm.pearson(mimat)
-        dist = 1.0 - np.abs(netmeasures[0])
-        for j in range(dist.shape[0]):
-            dist[j, j] = 0
-         
+        if tlabel == 'MI':
+            netmeasures = nm.pearson(mimat)
+            dist = np.sqrt(1.0 - netmeasures[0]**2)
+            for j in range(dist.shape[0]):
+                dist[j, j] = 0
+        else:
+            # trace dist, bures_dist, bures_angle
+            dist = dm.compute_distance(mimat, tlabel)         
+                    
         dgms = ph.compute_ph_unit(dist, max_dim=max_dim)
+        
         for j, dgm in enumerate(dgms):
             for pt in dgm:
                 outstr[j].append('{} {} {} {}'.format(pt[0], pt[1], 1, idx))
@@ -154,16 +162,17 @@ if __name__ == '__main__':
     parser.add_argument('--persistent', type=int, default=0)
     parser.add_argument('--size', type=int, required=True)
     parser.add_argument('--exp', type=str, default='exp_test')
-    parser.add_argument('--odir', type=str, default='results')
+    parser.add_argument('--odir', type=str, default='ising3')
     parser.add_argument('--nproc', type=int, default=16)
     parser.add_argument('--maxdim', type=int, default=1)
-
+    parser.add_argument('--dist', type=str, default='MI')
     args = parser.parse_args()
     print(args)
     post_flag, plot_flag = (args.postprocess > 0), (args.plot > 0)
     persis_flag, L = (args.persistent > 0), args.size
     exp_name, out_dir, nproc = args.exp, args.odir, args.nproc
     max_dim = args.maxdim
+    tlabel = args.dist
 
     if os.path.isdir(out_dir) == False:
         os.mkdir(out_dir)
@@ -171,13 +180,14 @@ if __name__ == '__main__':
     sim_outs, glist = simulate(L=L, ExpName=exp_name, PostProcess=post_flag, ShowPlot=plot_flag)
     if sim_outs is not None:
         print('Num outputs', len(sim_outs))
-    
+    else:
+        exit(1)
     # Multi-processing
     processes = []
     N = len(sim_outs)
     lst = np.array_split(range(0, N), nproc)
     time_stamp = int(time.time() * 1000.0)
-    basename = 'ising_L_{}'.format(L)
+    basename = 'ising_L_{}_{}'.format(L, tlabel)
     tmpdir = os.path.join(args.odir, '{}_{}'.format(exp_name, time_stamp))
 
     #with tp.TemporaryDirectory() as tmpdir:
@@ -186,8 +196,20 @@ if __name__ == '__main__':
         outlist = lst[proc_id]
         print(outlist)
         bg = outlist[0]
-        mils = [sim_outs[j]['MI'] for j in outlist]
-        p = Process(target=persistent_compute, args=(mils, max_dim, bg, time_stamp, basename, tmpdir, proc_id))
+        
+        # create density matrix
+        mils = []
+        if tlabel == 'MI':
+            mils = [sim_outs[j]['MI'] for j in outlist]
+        else:
+            for j in outlist:
+                sout = sim_outs[j]
+                rhols = [sout['rho_{}'.format(i+1)] for i in range(L)]
+                mils.append(rhols)
+
+        #print(sim_outs[bg].keys()) 
+        
+        p = Process(target=persistent_compute, args=(mils, max_dim, bg, time_stamp, basename, tmpdir, proc_id, tlabel))
         processes.append(p)
     #print(os.path.exists(tmpdir), tmpdir)
 
@@ -205,6 +227,7 @@ if __name__ == '__main__':
     plt.style.use('seaborn-colorblind')
     plt.rc('font', family='serif')
     plt.rc('mathtext', fontset='cm')
+    cycle = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
     # Concat files and remove tmpdir
     def arr_reshape(arr):
@@ -229,6 +252,8 @@ if __name__ == '__main__':
                 statslist.append(sarr)
         
         pharr = np.concatenate(phlist, axis=0)
+        #print(statslist)
+        #print(len(statslist), statslist[0].shape)
         statsarr = np.concatenate(statslist, axis=0)
         statsarr[:, 0] = glist
         print(d, pharr.shape, statsarr.shape)

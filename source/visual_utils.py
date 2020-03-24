@@ -4,6 +4,35 @@ import os
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.stats import gaussian_kde
+from matplotlib.colors import LinearSegmentedColormap
+
+def generate_listcol(option):
+    clist = ['red', 'green', 'blue']
+    if option == 1:
+        clist = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00']
+    if option == 2:
+        clist = ['#d7191c', '#fdae61', '#018571', '#abd9e9', '#2c7bb6']
+    if option == 3:
+        clist = ['#b2182b', '#ef8a62', '#fddbc7', '#d1e5f0', '#67a9cf', '#2166ac']
+    return clist
+
+def generate_cmap(option):
+    if option == 1:
+        # For diverging 5 class colorbrewer2.org
+        cm = _generate_cmap(['#d7191c', '#fdae61', '#ffffbf', '#abd9e9', '#2c7bb6'])
+    elif option == 2:
+        cm = _generate_cmap(['#b2182b', '#ef8a62', '#fddbc7', '#d1e5f0', '#67a9cf', '#2166ac'])
+    else:
+        cm = _generate_cmap(['red', 'blue', 'green'])
+    return cm
+
+def _generate_cmap(colors):
+    values = range(len(colors))
+    vmax = np.ceil(np.max(values))
+    color_list = []
+    for v, c in zip(values, colors):
+        color_list.append((v / vmax, c))
+    return LinearSegmentedColormap.from_list('custom_cmap', color_list)
 
 def plot_diagrams_with_mat(fig_path, tstr, km, dgm):
     #plt.style.use('dark_background')

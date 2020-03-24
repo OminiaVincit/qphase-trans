@@ -35,6 +35,8 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
     myObservables = mps.Observables(Operators)
     # site terms
     myObservables.AddObservable('site', 'nbtotal', name='n')
+    myObservables.AddObservable('DensityMatrix_i', [])
+    myObservables.AddObservable('DensityMatrix_ij', [])
     myObservables.AddObservable('MI', True)
     myConv = mps.MPSConvParam(max_bond_dimension=200, 
                 variance_tol = 1E-8,
@@ -45,7 +47,8 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
 
     # Specify constants and parameter lists
     U = 1.0
-    tlist = np.linspace(0.01, 0.41, 41)
+    tlist = np.linspace(0.02, 1.00, 50)
+    #tlist = np.linspace(0.01, 0.41, 41)
     #tlist = np.linspace(0.1, 0.4, 5)
     parameters = []
     N = L
@@ -124,7 +127,7 @@ def persistent_compute(mi_mats, max_dim, bg, time_stamp, basename, tmpdir, proce
         idx = bg + i
         #print(process_id, i, bg, idx, mimat[3][26])
         netmeasures = nm.pearson(mimat)
-        dist = 1.0 - np.abs(netmeasures[0])
+        dist = np.sqrt(1.0 - netmeasures[0]**2)
         for j in range(dist.shape[0]):
             dist[j, j] = 0
          
