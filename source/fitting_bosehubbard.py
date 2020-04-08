@@ -25,7 +25,7 @@ if __name__ == '__main__':
     typestats = args.stats
     labels = ['Pentropy', 'Pnorm', 'Diff']
         
-    #plt.style.use('seaborn-colorblind')
+    plt.style.use('seaborn-colorblind')
     plt.rc('font', family='serif')
     plt.rc('mathtext', fontset='cm')
     plt.rcParams['font.size'] = 20
@@ -39,6 +39,7 @@ if __name__ == '__main__':
     sz=80
     alpha=0.7
     Ls = [12, 14, 16, 18, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700]
+    #Ls = [12, 14, 16, 18, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     
     xs, qls =[],  []
     
@@ -65,17 +66,19 @@ if __name__ == '__main__':
     optparams, covariant = scipy.optimize.curve_fit(func, xs, qls, p0 = iniparams)
     print(optparams)
     print(covariant)
+    y = func(xs, optparams[0], optparams[1], optparams[2])
     # Plot the fitting curve
-    #fig, ax = plt.subplots()
-    #ax.set_xlabel(r"Tunneling " r"$J/U$", fontsize=28)
+    fig, ax = plt.subplots()
+    ax.set_xlabel(r"System size " r"$L$", fontsize=28)
     #ax.set_ylabel(labels[typestats], fontsize=28)
     #ax.plot(glist, vals_list, linestyle=lstyle, markersize=8, color=c, alpha=alpha, linewidth=4.0, label = 'L-{}'.format(L))
             
-    #ax.scatter(glist, vals_list, s=sz, cmap=cm, alpha=alpha, edgecolor='k', linewidths='1', label = 'L-{}'.format(L))
-    #ax.tick_params(direction='in', length=8)
-    #ax.legend(fontsize=18)
-        
-    #for figtype in ['png', 'pdf', 'svg']:
-    #    fig_ofile = os.path.join(resname, '{}_{}_agg_{}_fig_dim_{}.{}'.format(basename, lb, typestats, d, figtype))
-    #    plt.savefig(fig_ofile, bbox_inches='tight', format=figtype)
+    ax.scatter(xs, qls, s=sz, alpha=alpha, edgecolor='k', linewidths='1', label = 'Effective critical points')
+    ax.plot(xs, y, '-')
+    ax.tick_params(direction='in', length=8)
+    ax.legend(fontsize=18)
+    ax.grid()    
+    for figtype in ['png', 'pdf']:
+        fig_ofile = os.path.join(resname, '{}_fitting_fig_dim_{}.{}'.format(basename, d, figtype))
+        plt.savefig(fig_ofile, bbox_inches='tight', format=figtype)
     

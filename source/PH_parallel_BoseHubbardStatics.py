@@ -35,8 +35,8 @@ def simulate(L, ExpName, PostProcess=False, ShowPlot=True):
     myObservables = mps.Observables(Operators)
     # site terms
     myObservables.AddObservable('site', 'nbtotal', name='n')
-    myObservables.AddObservable('DensityMatrix_i', [])
-    myObservables.AddObservable('DensityMatrix_ij', [])
+    #myObservables.AddObservable('DensityMatrix_i', [])
+    #myObservables.AddObservable('DensityMatrix_ij', [])
     myObservables.AddObservable('MI', True)
     myConv = mps.MPSConvParam(max_bond_dimension=200, 
                 variance_tol = 1E-8,
